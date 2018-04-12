@@ -1,0 +1,48 @@
+select
+    telephely,
+    count(*) as "Létszám",
+    sum(fizetes)
+from
+    dolgozo
+natural join
+    osztaly
+where
+    telephely like '%A%'
+group by
+    telephely
+having
+    count(*) > 1
+order by
+    "Létszám";
+    
+--------------------------------------------------------------------
+
+Fejezzük ki természetes nyelven: Kik azok, akik legalább azokat 
+      a gyümölcsöket szeretik, mint Micimackó = vagyis azok, akik 
+      minden olyan gyümölcsöt szeretnek, amit Micimackó = vagyis azok, 
+      akikhez nincs olyan gyümölcs, amit Micimackó szeret, de Ő nem, 
+      majd ezt is írjuk át SQL SELECT-re...
+
+SELECT DISTINCT NEV FROM SZERET S1
+WHERE NOT EXISTS 
+      (SELECT GYUMOLCS FROM SZERET S2
+       WHERE NEV='Micimackó' AND NOT EXISTS 
+             (SELECT NEV, GYUMOLCS FROM SZERET 
+              WHERE NEV=S1.NEV AND GYUMOLCS=S2.GYUMOLCS));
+
+vagy
+
+SELECT DISTINCT NEV FROM SZERET S1
+WHERE NOT EXISTS 
+      ((SELECT GYUMOLCS FROM SZERET 
+        WHERE NEV='Micimackó') 
+      MINUS
+       (SELECT GYUMOLCS FROM SZERET 
+        WHERE NEV=S1.NEV)); 
+---------------------------------------------------------------------------
+
+http://people.inf.elte.hu/vzoli/Adatbazisok_1/Gy7/feladat7b.txt
+
+SELECT ckod, cnev FROM cikk WHERE ckod IN 
+    (SELECT ckod FROM szallit, szallito WHERE szallit.szkod=szallito.szkod
+     AND telephely='Pecs');
